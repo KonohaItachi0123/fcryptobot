@@ -1,0 +1,253 @@
+<html lang="en">
+  <head>
+    <title>Selling Bot</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://code.jquery.com/jquery-3.6.3.min.js"
+    ></script>
+  </head>
+  <body>
+    <div class="container pt-3 my-5 border">
+      <h5 class="mb-4">Please Enter Your ApI Information</h5>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">API KEY</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="API KEY"
+          id="api_key"
+        />
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">SECRET KEY</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="SECRET KEY"
+          id="api_secret_key"
+        />
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text" style="width: 120px">PASSWORD</span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="PASSWORD"
+          id="api_password"
+        />
+      </div>
+    </div>
+    <div class="container pt-3">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="mb-4">Please enter the your selling information</h5>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >MIN VALUE(USD)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="MIN SELLING VALUE"
+              id="min_val"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >MAX VALUE(USD)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="MAX SELLING VALUE"
+              id="max_val"
+            />
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text" style="width: 150px"
+              >INTERVAL TIME(S)</span
+            >
+            <input
+              type="number"
+              class="form-control"
+              placeholder="THE SELLING TIME "
+              id="interval_time"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="cars">MARKETING SYMBOL:</label>
+            <select id="cars">
+              <option value="ETH/USDT">ETH/USDT</option>
+              <option value="BTC/USDT">BTC/USDT</option>
+              <option value="BNB/USDT">BNB/USDT</option>
+              <option value="DOGE/USDT">DOGE/USDT</option>
+              <option value="SOL/USDT">SOL/USDT</option>
+              <option value="DOT/USDT">DOT/USDT</option>
+              <option value="MYRIA/USDT">MYRIA/USDT</option>
+              <option value="APE/USDT">APE/USDT</option>
+              <option value="MASK/USDT">MASK/USDT</option>
+              <option value="BAT/USDT">BAT/USDT</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btn_start">
+            Start
+          </button>
+          <button type="button" class="btn btn-primary" id="btn_stop">
+            Stop
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            style="display: none"
+            id="btn_test"
+          >
+            Test
+          </button>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-7">
+          <table class="table table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>MIN_VALUE</th>
+                <th>MAX_VALUE</th>
+                <th>INTERVAL_TIME</th>
+                <th>MARKET SYMBOl</th>
+                <th>REMAIN</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ssp in selling_process %}
+              <tr>
+                <td>{{ssp.min_val}}</td>
+                <td>{{ssp.max_val}}</td>
+                <td>{{ssp.interval_time}}</td>
+                <td>{{ssp.marketing_symbol}}</td>
+                <td>{{ssp.crypto_remain}}</td>
+              </tr>
+
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      const getStatusdata = () => {
+        $.get("getremain/", function (response) {
+          if (response == "dsfsd") return;
+          $("table tr:not(:first)").remove();
+          response = response["foo"];
+          console.log(response);
+          const length_response = response.length;
+          if (length_response == 0) return;
+          for (let j = 0; j < response.length; j++) {
+            const tableBody = $("tbody");
+
+            const newRow = $("<tr>");
+
+            // create new cells and add them to the row
+            const nameCell = $("<td>").text(response[j]["min_val"]);
+            const ageCell = $("<td>").text(response[j]["max_val"]);
+            const genderCell = $("<td>").text(response[j]["interval_time"]);
+            const intervalCell = $("<td>").text(
+              response[j]["marketing_symbol"]
+            );
+            const reaminCell = $("<td>").text(response[j]["crypto_remain"]);
+
+            newRow.append(
+              nameCell,
+              ageCell,
+              genderCell,
+              intervalCell,
+              reaminCell
+            );
+
+            // add the new row to the table body
+            tableBody.append(newRow);
+          }
+        });
+      };
+      let interval_timer = setInterval(getStatusdata, 5000);
+      $("#btn_stop").click(function () {
+        $.get("stop/", function (response) {
+          if (response == "success") {
+            console.log("disconnected");
+            alert("all sell processes are stopped");
+            $("table tr:not(:first)").remove();
+          } else alert("something went wrong");
+        });
+      });
+
+      $("#btn_test").click(function () {
+        // $("table tr:eq(1) td:eq(1)").text("New value");
+        $.get("test/", function (response) {
+          console.log(response);
+        });
+      });
+
+      $("#btn_start").click(function () {
+        const api_key = $("#api_key").val();
+        const secret_key = $("#api_secret_key").val();
+        const api_password = $("#api_password").val();
+        const min_val = $("#min_val").val();
+        const max_val = $("#max_val").val();
+        const marketing_symbol = $("#cars").children("option:selected").val();
+        const interval_time = $("#interval_time").val();
+
+        if (
+          api_key == "" ||
+          secret_key == "" ||
+          api_password == "" ||
+          min_val == "" ||
+          max_val == "" ||
+          interval_time == ""
+        ) {
+          alert("your informations is missing");
+          return;
+        }
+
+        $.post(
+          "register/",
+          {
+            api_key: api_key,
+            secret_key: secret_key,
+            api_password: api_password,
+            min_val: min_val,
+            max_val: max_val,
+            interval_time: interval_time,
+            marketing_symbol: marketing_symbol,
+          },
+
+          function (data, status) {
+            if (data == "incorrect") {
+              alert("api information is incorrect");
+              return;
+            }
+            if (data == "repeat") {
+              alert("api information is repeated");
+              return;
+            }
+            $("#api_key").val("");
+            $("#api_secret_key").val("");
+            $("#api_password").val("");
+            $("#min_val").val("");
+            $("#max_val").val("");
+            $("#interval_time").val("");
+            console.log("connected");
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
