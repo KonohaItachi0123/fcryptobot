@@ -79,10 +79,10 @@ WSGI_APPLICATION = 'cryptobot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbtest',
-        'USER': 'postgres',
-        'PASSWORD': 'leodavinci',
-        'HOST': '127.0.0.1',
+        'NAME': 'd3jph5q6gsqd6g',
+        'USER': 'roewcjqlsepvbt',
+        'PASSWORD': '8ba811738ae9d9f7bfce8e4014742ef9958f926faf167b5ed200bc8545910cfd',
+        'HOST': 'ec2-3-217-146-37.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
